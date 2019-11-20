@@ -26,3 +26,17 @@ func (board *Board) GetListOfValues() []string {
 	}
 	return valueList
 }
+
+func (board Board) InitializeBoard() Board {
+	return Board{0, [9]string{
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+		"   ",
+	}}
+}

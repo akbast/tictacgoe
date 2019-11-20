@@ -25,5 +25,5 @@ func (player Player) CloseConnection() {
 	if err != nil {
 		fmt.Println("Error on closing connection", err)
 	}
-	log.Printf("Connection to %d closed.", player.id)
+	log.Printf("Connection to %d closed.", player.Id)
 }

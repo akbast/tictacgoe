@@ -18,17 +18,3 @@ type Command struct {
 	Name   string
 	Params map[string]interface{}
 }
-
-func InitializeBoard() Board {
-	return Board{0, [9]string{
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-	}}
-}

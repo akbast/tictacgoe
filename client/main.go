@@ -11,8 +11,9 @@ import (
 
 var commandChannel = make(chan shared.Command)
 
-var addr = flag.String("addr", "localhost:8080", "http service address")
+var addr = flag.String("addr", "192.168.1.24:8080", "http service address")
 var playerId int
+var sessionId string
 
 func main() {
 
@@ -114,7 +115,7 @@ func askForPlay(command shared.Command) {
 	params := make(map[string]interface{})
 	params["id"] = playerId
 	params["move"] = moveString
-
+	params["sessionId"] = sessionId
 	commandChannel <- shared.Command{Name: shared.ServerCommandUserMove, Params: params}
 }
 
@@ -139,7 +140,8 @@ func printBoard(boardFields []interface{}) {
 }
 
 func onPlayerAdded(command shared.Command) {
-	id := int(command.Params["id"].(float64))
+	id := int(command.Params["playerId"].(float64))
+	sessionId = command.Params["sessionId"].(string)
 	playerId = id
 	log.Printf("Your player Id is %d\n", playerId)
 }
