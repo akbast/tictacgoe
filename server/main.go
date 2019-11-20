@@ -4,35 +4,13 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
+	"mitarbeiterprojekt/tictactoe/server/model"
 	"mitarbeiterprojekt/tictactoe/shared"
 	"net/http"
 	"strconv"
 )
 
-//var players = make(map[*websocket.Conn]bool)
-
-type Player struct {
-	id         int
-	sign       string
-	connection *websocket.Conn
-}
-
-func (player Player) SendCommand(command shared.Command) {
-	err := player.connection.WriteJSON(command)
-	if err != nil {
-		fmt.Println("error on writing: ", err)
-	}
-}
-
-func (player Player) CloseConnection() {
-	err := player.connection.Close()
-	if err != nil {
-		fmt.Println("Error on closing connection", err)
-	}
-	log.Printf("Connection to %d closed.", player.id)
-}
-
-var players = make(map[int]Player)
+var players = make(map[int]model.Player)
 var board = shared.InitializeBoard()
 
 // Configure the upgrader
@@ -86,7 +64,7 @@ func addNewPlayer(conn *websocket.Conn) {
 	if playerId == 1 {
 		sign = " O "
 	}
-	players[len(players)] = Player{playerId, sign, conn}
+	players[len(players)] = model.Player{playerId, sign, conn}
 	log.Printf("New Player with Id %d added\n", playerId)
 	informPlayer(playerId, conn)
 }
@@ -146,9 +124,9 @@ func decideTurnsAndAskForMovement() {
 
 func informPlayersForGameEnd(winnerId int) {
 	winner := players[winnerId]
-	var loser Player
+	var loser model.Player
 	for _, player := range players {
-		if player.id != winnerId {
+		if player.Id != winnerId {
 			loser = player
 		}
 	}
@@ -164,7 +142,7 @@ func resetState() {
 		player.CloseConnection()
 	}
 	// remove players
-	players = make(map[int]Player)
+	players = make(map[int]model.Player)
 
 	// reset board
 	board = shared.InitializeBoard()
@@ -222,7 +200,7 @@ func askForPlay(playerId, waiterId int) {
 	waiter.SendCommand(waitCommand)
 }
 
-func informPlayerForWrongMovement(player Player, move int) {
+func informPlayerForWrongMovement(player model.Player, move int) {
 	params := make(map[string]interface{})
 	params["info"] = fmt.Sprintf("Wrong move %d. It is blocked already.", move)
 	wrongMoveCommand := shared.Command{Name: shared.ClientWrongMove, Params: params}
@@ -247,11 +225,11 @@ func evaluateMovement(command shared.Command) {
 	movePlace := &board.Fields[move]
 	if *movePlace == "   " {
 		log.Println("Move can be placed.")
-		*movePlace = player.sign
+		*movePlace = player.Sign
 		board.TurnNumber = board.TurnNumber + 1
 		decideTurnsAndAskForMovement()
 	} else {
-		log.Printf("Move cannot be placed. It is already marked for %d\n", player.id)
+		log.Printf("Move cannot be placed. It is already marked for %d\n", player.Id)
 		informPlayerForWrongMovement(player, move)
 	}
 }
