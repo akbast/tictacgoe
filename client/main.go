@@ -11,7 +11,7 @@ import (
 
 var commandChannel = make(chan shared.Command)
 
-var addr = flag.String("addr", "192.168.1.24:8080", "http service address")
+var addr = flag.String("addr", "localhost:8080", "http service address")
 var playerId int
 var sessionId string
 
@@ -81,13 +81,13 @@ func evaluateMessage(command shared.Command, conn *websocket.Conn) {
 	case shared.ClientCommandGameBegins:
 		onGameBegins(command)
 	case shared.ClientCommandDisplayBoard:
-		displayBoard(command)
+		onDisplayBoard(command)
 	case shared.ClientCommandAskForPlay:
-		askForPlay(command)
+		onAskForPlay(command)
 	case shared.ClientWaitForMove:
-		waitForMove(command)
+		onWaitForMove(command)
 	case shared.ClientWrongMove:
-		wrongMove(command)
+		onWrongMove(command)
 	case shared.ClientGameEnds:
 		onGameEnds(command)
 	}
@@ -98,16 +98,16 @@ func onGameEnds(command shared.Command) {
 	log.Println(info)
 }
 
-func wrongMove(command shared.Command) {
+func onWrongMove(command shared.Command) {
 	info := command.Params["info"]
 	log.Println(info)
 }
 
-func waitForMove(command shared.Command) {
+func onWaitForMove(command shared.Command) {
 	log.Println("Wait for other players move.")
 }
 
-func askForPlay(command shared.Command) {
+func onAskForPlay(command shared.Command) {
 	log.Println("Make your move")
 	var moveString string
 	fmt.Scan(&moveString)
@@ -119,7 +119,7 @@ func askForPlay(command shared.Command) {
 	commandChannel <- shared.Command{Name: shared.ServerCommandUserMove, Params: params}
 }
 
-func displayBoard(command shared.Command) {
+func onDisplayBoard(command shared.Command) {
 	log.Println("-Actual status of board-")
 
 	var boardFields = (command.Params["boardFields"]).([]interface{})
