@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
-	"mitarbeiterprojekt/tictactoe/server/model"
-	"mitarbeiterprojekt/tictactoe/shared"
 	"strconv"
+	"tictacgoe/server/model"
+	"tictacgoe/shared"
 )
 
 type GameController struct {

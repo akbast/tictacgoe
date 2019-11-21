@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/inancgumus/screen"
 	"log"
-	"mitarbeiterprojekt/tictactoe/shared"
 	"net/url"
+	"tictacgoe/shared"
 )
 
 var commandChannel = make(chan shared.Command)

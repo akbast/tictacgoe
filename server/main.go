@@ -4,9 +4,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"log"
-	"mitarbeiterprojekt/tictactoe/server/controller"
-	"mitarbeiterprojekt/tictactoe/shared"
 	"net/http"
+	"tictacgoe/server/controller"
+	"tictacgoe/shared"
 )
 
 var gameControllers = make(map[string]*controller.GameController)

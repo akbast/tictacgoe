@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
-	"mitarbeiterprojekt/tictactoe/shared"
+	"tictacgoe/shared"
 )
 
 type Player struct {
