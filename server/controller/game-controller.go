@@ -78,6 +78,11 @@ func (controller GameController) decideTurnsAndAskForMovement() {
 		return
 	}
 
+	if controller.checkForGameEnd() {
+		controller.informPlayersForTieGame()
+		return
+	}
+
 	playerId, waiterId := 0, 0
 	if controller.board.TurnNumber%2 == 1 {
 		fmt.Println("Player 0's turn")
@@ -87,6 +92,10 @@ func (controller GameController) decideTurnsAndAskForMovement() {
 		playerId, waiterId = 1, 0
 	}
 	controller.askForPlay(playerId, waiterId)
+}
+
+func (controller GameController) checkForGameEnd() bool {
+	return controller.board.TurnNumber == 9
 }
 
 func prepareGameEndCommand(info string) shared.Command {
@@ -138,6 +147,7 @@ func (controller GameController) askForPlay(playerId, waiterId int) {
 
 	waitCommand := shared.Command{Name: shared.ClientWaitForMove, Params: nil}
 	waiter := controller.Players[waiterId]
+	waiter.SendCommand(displayBoardCommand)
 	waiter.SendCommand(waitCommand)
 }
 
@@ -146,7 +156,6 @@ func (controller GameController) informPlayerForWrongMovement(player model.Playe
 	params["info"] = fmt.Sprintf("Wrong move %d. It is blocked already.", move)
 	wrongMoveCommand := shared.Command{Name: shared.ClientWrongMove, Params: params}
 	player.SendCommand(wrongMoveCommand)
-
 	controller.decideTurnsAndAskForMovement()
 }
 
@@ -178,15 +187,26 @@ func (controller *GameController) EvaluateMovement(command shared.Command) {
 
 func (controller GameController) informPlayersForGameEnd(winnerId int) {
 	winner := controller.Players[winnerId]
+	displayBoardCommand := controller.prepareDisplayBoardCommand()
 	var loser model.Player
 	for _, player := range controller.Players {
+		player.SendCommand(displayBoardCommand)
 		if player.Id != winnerId {
 			loser = player
 		}
 	}
-
 	winner.SendCommand(prepareGameEndCommand("Congratulations! You won!"))
 	loser.SendCommand(prepareGameEndCommand("You Lose!"))
+	controller.resetState()
+}
+
+func (controller GameController) informPlayersForTieGame() {
+	displayBoardCommand := controller.prepareDisplayBoardCommand()
+	endGameCommand := prepareGameEndCommand("Tie Game!")
+	for _, player := range controller.Players {
+		player.SendCommand(displayBoardCommand)
+		player.SendCommand(endGameCommand)
+	}
 	controller.resetState()
 }
 

@@ -21,7 +21,7 @@ var upgrader = websocket.Upgrader{
 func main() {
 	http.HandleFunc("/game", game)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
 
 func game(writer http.ResponseWriter, request *http.Request) {

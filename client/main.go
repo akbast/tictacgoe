@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/inancgumus/screen"
 	"log"
 	"mitarbeiterprojekt/tictactoe/shared"
 	"net/url"
@@ -11,7 +12,7 @@ import (
 
 var commandChannel = make(chan shared.Command)
 
-var addr = flag.String("addr", "localhost:8080", "http service address")
+var addr = flag.String("addr", "localhost:8081", "http service address")
 var playerId int
 var sessionId string
 
@@ -120,6 +121,8 @@ func onAskForPlay(command shared.Command) {
 }
 
 func onDisplayBoard(command shared.Command) {
+	screen.Clear()
+	screen.MoveTopLeft()
 	log.Println("-Actual status of board-")
 
 	var boardFields = (command.Params["boardFields"]).([]interface{})
