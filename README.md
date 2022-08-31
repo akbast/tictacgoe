@@ -1,3 +1,3 @@
 # tictacgoe
 
-Client - Server TicTacToe game written in Go. 
+Client - Server TicTacToe game written in Go.  
